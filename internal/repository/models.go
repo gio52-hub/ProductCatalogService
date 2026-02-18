@@ -1,3 +1,4 @@
+// Package repository implements the persistence layer using Google Cloud Spanner.
 package repository
 
 import (

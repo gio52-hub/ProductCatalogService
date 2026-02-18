@@ -3,6 +3,7 @@ package domain
 // ProductStatus represents the status of a product.
 type ProductStatus string
 
+// Product status values.
 const (
 	ProductStatusDraft    ProductStatus = "draft"
 	ProductStatusActive   ProductStatus = "active"

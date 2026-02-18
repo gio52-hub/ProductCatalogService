@@ -1,3 +1,4 @@
+// Package domain contains the core business logic, aggregates, value objects, and domain events.
 package domain
 
 // Field constants for change tracking

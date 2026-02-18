@@ -1,3 +1,4 @@
+// Package clock provides a time abstraction for deterministic testing.
 package clock
 
 import "time"

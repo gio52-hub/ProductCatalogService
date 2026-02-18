@@ -1,3 +1,4 @@
+// Package committer provides a Unit of Work abstraction for atomic persistence operations.
 package committer
 
 import (

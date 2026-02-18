@@ -87,19 +87,40 @@ func ReconstructProduct(
 	}
 }
 
-// Getters
+// ID returns the product identifier.
+func (p *Product) ID() string { return p.id }
 
-func (p *Product) ID() string           { return p.id }
-func (p *Product) Name() string         { return p.name }
-func (p *Product) Description() string  { return p.description }
-func (p *Product) Category() string     { return p.category }
-func (p *Product) BasePrice() *Money    { return p.basePrice }
-func (p *Product) Discount() *Discount  { return p.discount }
+// Name returns the product name.
+func (p *Product) Name() string { return p.name }
+
+// Description returns the product description.
+func (p *Product) Description() string { return p.description }
+
+// Category returns the product category.
+func (p *Product) Category() string { return p.category }
+
+// BasePrice returns the product base price.
+func (p *Product) BasePrice() *Money { return p.basePrice }
+
+// Discount returns the currently applied discount, if any.
+func (p *Product) Discount() *Discount { return p.discount }
+
+// Status returns the current product status.
 func (p *Product) Status() ProductStatus { return p.status }
+
+// CreatedAt returns the creation timestamp.
 func (p *Product) CreatedAt() time.Time { return p.createdAt }
+
+// UpdatedAt returns the last update timestamp.
 func (p *Product) UpdatedAt() time.Time { return p.updatedAt }
+
+// ArchivedAt returns the archival timestamp, if archived.
 func (p *Product) ArchivedAt() *time.Time { return p.archivedAt }
+
+// Changes returns the change tracker for dirty field detection.
 func (p *Product) Changes() *ChangeTracker { return p.changes }
+
+// DomainEvents returns the uncommitted domain events.
 func (p *Product) DomainEvents() []DomainEvent { return p.events }
 
 // ClearEvents clears all domain events (typically after they've been processed).

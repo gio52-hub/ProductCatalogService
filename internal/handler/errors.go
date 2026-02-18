@@ -1,3 +1,4 @@
+// Package handler implements the gRPC transport layer for the product catalog service.
 package handler
 
 import (

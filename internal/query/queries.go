@@ -1,3 +1,4 @@
+// Package query implements the read side of CQRS for product catalog queries.
 package query
 
 import (

@@ -1,3 +1,4 @@
+// Package contract defines the repository and read model interfaces for the application layer.
 package contract
 
 import (

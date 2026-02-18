@@ -93,11 +93,12 @@ func TestNewProduct_InvalidInputs(t *testing.T) {
 func TestProduct_Activate(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(1999, 100)
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
 
 	product.ClearEvents() // Clear creation event
 
-	err := product.Activate(now.Add(time.Hour))
+	err = product.Activate(now.Add(time.Hour))
 
 	require.NoError(t, err)
 	assert.Equal(t, ProductStatusActive, product.Status())
@@ -109,10 +110,11 @@ func TestProduct_Activate(t *testing.T) {
 func TestProduct_Activate_AlreadyActive(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(1999, 100)
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
-	product.Activate(now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
+	require.NoError(t, product.Activate(now))
 
-	err := product.Activate(now.Add(time.Hour))
+	err = product.Activate(now.Add(time.Hour))
 
 	assert.ErrorIs(t, err, ErrProductAlreadyActive)
 }
@@ -120,11 +122,12 @@ func TestProduct_Activate_AlreadyActive(t *testing.T) {
 func TestProduct_Deactivate(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(1999, 100)
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
-	product.Activate(now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
+	require.NoError(t, product.Activate(now))
 	product.ClearEvents()
 
-	err := product.Deactivate(now.Add(time.Hour))
+	err = product.Deactivate(now.Add(time.Hour))
 
 	require.NoError(t, err)
 	assert.Equal(t, ProductStatusInactive, product.Status())
@@ -135,10 +138,11 @@ func TestProduct_Deactivate(t *testing.T) {
 func TestProduct_Archive(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(1999, 100)
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
 	product.ClearEvents()
 
-	err := product.Archive(now.Add(time.Hour))
+	err = product.Archive(now.Add(time.Hour))
 
 	require.NoError(t, err)
 	assert.Equal(t, ProductStatusArchived, product.Status())
@@ -150,12 +154,14 @@ func TestProduct_Archive(t *testing.T) {
 func TestProduct_ApplyDiscount(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(10000, 100) // $100.00
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
-	product.Activate(now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
+	require.NoError(t, product.Activate(now))
 	product.ClearEvents()
 
-	discount, _ := NewDiscount(big.NewRat(20, 1), now, now.Add(24*time.Hour))
-	err := product.ApplyDiscount(discount, now)
+	discount, err := NewDiscount(big.NewRat(20, 1), now, now.Add(24*time.Hour))
+	require.NoError(t, err)
+	err = product.ApplyDiscount(discount, now)
 
 	require.NoError(t, err)
 	assert.NotNil(t, product.Discount())
@@ -172,11 +178,12 @@ func TestProduct_ApplyDiscount(t *testing.T) {
 func TestProduct_ApplyDiscount_NotActive(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(10000, 100)
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
-	// Product is in draft status
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
 
-	discount, _ := NewDiscount(big.NewRat(20, 1), now, now.Add(24*time.Hour))
-	err := product.ApplyDiscount(discount, now)
+	discount, err := NewDiscount(big.NewRat(20, 1), now, now.Add(24*time.Hour))
+	require.NoError(t, err)
+	err = product.ApplyDiscount(discount, now)
 
 	assert.ErrorIs(t, err, ErrProductNotActive)
 }
@@ -184,13 +191,15 @@ func TestProduct_ApplyDiscount_NotActive(t *testing.T) {
 func TestProduct_RemoveDiscount(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(10000, 100)
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
-	product.Activate(now)
-	discount, _ := NewDiscount(big.NewRat(20, 1), now, now.Add(24*time.Hour))
-	product.ApplyDiscount(discount, now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
+	require.NoError(t, product.Activate(now))
+	discount, err := NewDiscount(big.NewRat(20, 1), now, now.Add(24*time.Hour))
+	require.NoError(t, err)
+	require.NoError(t, product.ApplyDiscount(discount, now))
 	product.ClearEvents()
 
-	err := product.RemoveDiscount(now.Add(time.Hour))
+	err = product.RemoveDiscount(now.Add(time.Hour))
 
 	require.NoError(t, err)
 	assert.Nil(t, product.Discount())
@@ -202,9 +211,10 @@ func TestProduct_RemoveDiscount(t *testing.T) {
 func TestProduct_RemoveDiscount_NoDiscount(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(10000, 100)
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
 
-	err := product.RemoveDiscount(now)
+	err = product.RemoveDiscount(now)
 
 	assert.ErrorIs(t, err, ErrNoDiscountToRemove)
 }
@@ -212,10 +222,11 @@ func TestProduct_RemoveDiscount_NoDiscount(t *testing.T) {
 func TestProduct_Update(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(1999, 100)
-	product, _ := NewProduct("123", "Original", "Desc", "Cat", basePrice, now)
+	product, err := NewProduct("123", "Original", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
 	product.ClearEvents()
 
-	err := product.Update("Updated", "New Desc", "NewCat", now.Add(time.Hour))
+	err = product.Update("Updated", "New Desc", "NewCat", now.Add(time.Hour))
 
 	require.NoError(t, err)
 	assert.Equal(t, "Updated", product.Name())
@@ -231,10 +242,11 @@ func TestProduct_Update(t *testing.T) {
 func TestProduct_Update_Archived(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(1999, 100)
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
-	product.Archive(now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
+	require.NoError(t, product.Archive(now))
 
-	err := product.Update("New", "Desc", "Cat", now.Add(time.Hour))
+	err = product.Update("New", "Desc", "Cat", now.Add(time.Hour))
 
 	assert.ErrorIs(t, err, ErrProductArchived)
 }
@@ -242,7 +254,8 @@ func TestProduct_Update_Archived(t *testing.T) {
 func TestProduct_EffectivePrice_WithoutDiscount(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(5000, 100) // $50.00
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
 
 	effectivePrice := product.EffectivePrice(now)
 
@@ -252,12 +265,13 @@ func TestProduct_EffectivePrice_WithoutDiscount(t *testing.T) {
 func TestProduct_EffectivePrice_WithExpiredDiscount(t *testing.T) {
 	now := time.Now()
 	basePrice := NewMoney(10000, 100)
-	product, _ := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
-	product.Activate(now)
+	product, err := NewProduct("123", "Test", "Desc", "Cat", basePrice, now)
+	require.NoError(t, err)
+	require.NoError(t, product.Activate(now))
 
-	// Apply a discount that ends before "now"
-	discount, _ := NewDiscount(big.NewRat(20, 1), now.Add(-48*time.Hour), now.Add(-24*time.Hour))
-	product.ApplyDiscount(discount, now.Add(-48*time.Hour))
+	discount, err := NewDiscount(big.NewRat(20, 1), now.Add(-48*time.Hour), now.Add(-24*time.Hour))
+	require.NoError(t, err)
+	require.NoError(t, product.ApplyDiscount(discount, now.Add(-48*time.Hour)))
 
 	// Check effective price at current time (discount expired)
 	effectivePrice := product.EffectivePrice(now)

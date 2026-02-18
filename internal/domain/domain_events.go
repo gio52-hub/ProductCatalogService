@@ -6,6 +6,8 @@ import (
 )
 
 // DomainEvent is the interface that all domain events must implement.
+//
+//nolint:revive // stuttering is intentional for DDD ubiquitous language clarity
 type DomainEvent interface {
 	EventType() string
 	AggregateID() string
@@ -18,10 +20,12 @@ type BaseEvent struct {
 	occurredAt  time.Time
 }
 
+// AggregateID returns the ID of the aggregate that raised the event.
 func (e BaseEvent) AggregateID() string {
 	return e.aggregateID
 }
 
+// OccurredAt returns the time the event occurred.
 func (e BaseEvent) OccurredAt() time.Time {
 	return e.occurredAt
 }
@@ -35,6 +39,7 @@ type ProductCreatedEvent struct {
 	BasePrice   *Money
 }
 
+// EventType returns the event type identifier.
 func (e ProductCreatedEvent) EventType() string {
 	return "product.created"
 }
@@ -61,6 +66,7 @@ type ProductUpdatedEvent struct {
 	Category    string
 }
 
+// EventType returns the event type identifier.
 func (e ProductUpdatedEvent) EventType() string {
 	return "product.updated"
 }
@@ -83,6 +89,7 @@ type ProductActivatedEvent struct {
 	BaseEvent
 }
 
+// EventType returns the event type identifier.
 func (e ProductActivatedEvent) EventType() string {
 	return "product.activated"
 }
@@ -102,6 +109,7 @@ type ProductDeactivatedEvent struct {
 	BaseEvent
 }
 
+// EventType returns the event type identifier.
 func (e ProductDeactivatedEvent) EventType() string {
 	return "product.deactivated"
 }
@@ -121,6 +129,7 @@ type ProductArchivedEvent struct {
 	BaseEvent
 }
 
+// EventType returns the event type identifier.
 func (e ProductArchivedEvent) EventType() string {
 	return "product.archived"
 }
@@ -143,6 +152,7 @@ type DiscountAppliedEvent struct {
 	EndDate            time.Time
 }
 
+// EventType returns the event type identifier.
 func (e DiscountAppliedEvent) EventType() string {
 	return "product.discount_applied"
 }
@@ -165,6 +175,7 @@ type DiscountRemovedEvent struct {
 	BaseEvent
 }
 
+// EventType returns the event type identifier.
 func (e DiscountRemovedEvent) EventType() string {
 	return "product.discount_removed"
 }

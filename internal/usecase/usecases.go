@@ -1,3 +1,4 @@
+// Package usecase implements the application-level commands following the Golden Mutation pattern.
 package usecase
 
 import (
