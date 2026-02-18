@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  spanner-emulator:
+    image: gcr.io/cloud-spanner-emulator/emulator
+    ports:
+      - "9010:9010"
+      - "9020:9020"
+    environment:
+      - SPANNER_EMULATOR_HOST=0.0.0.0:9010
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9020"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  product-catalog-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    environment:
+      - SPANNER_EMULATOR_HOST=spanner-emulator:9010
+      - SPANNER_PROJECT_ID=test-project
+      - SPANNER_INSTANCE_ID=test-instance
+      - SPANNER_DATABASE_ID=test-database
+      - GRPC_PORT=50051
+    depends_on:
+      spanner-emulator:
+        condition: service_healthy
+    restart: unless-stopped
