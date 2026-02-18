@@ -51,30 +51,17 @@ A simplified Product Catalog Service built with **Go 1.22+**, implementing **Dom
 ## Project Structure
 
 ```
-product-catalog-service/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                 # GitHub Actions CI/CD pipeline
-├── cmd/
-│   └── server/
-│       └── main.go                # Application entry point
+├── .github/workflows/             # GitHub Actions CI/CD pipeline
+├── cmd/server/                    # Application entry point
 ├── internal/
-│   ├── app/
-│   │   └── product/
-│   │       ├── contracts/         # Repository interfaces
-│   │       ├── domain/            # Domain layer (pure Go, no dependencies)
-│   │       ├── queries/           # Query handlers (CQRS read side)
-│   │       ├── repo/              # Spanner repository implementations
-│   │       └── usecases/          # Command handlers (CQRS write side)
-│   ├── models/                    # Database models and mutations
-│   ├── pkg/
-│   │   ├── clock/                 # Time abstraction for testing
-│   │   └── committer/             # Transaction commit plan
-│   ├── services/
-│   │   └── options.go             # Dependency injection container
-│   └── transport/
-│       └── grpc/
-│           └── product/           # gRPC handlers, validators, mappers
+│   ├── clock/                     # Time abstraction for testing
+│   ├── committer/                 # Transaction commit plan
+│   ├── contract/                  # Repository & read model interfaces
+│   ├── domain/                    # Domain layer (pure Go, no dependencies)
+│   ├── handler/                   # gRPC handlers, validators, mappers
+│   ├── query/                     # Query handlers (CQRS read side)
+│   ├── repository/                # Spanner implementations + DB models
+│   └── usecase/                   # Command handlers (CQRS write side)
 ├── migrations/
 │   └── 001_initial_schema.sql     # Database schema
 ├── proto/
@@ -82,10 +69,11 @@ product-catalog-service/
 │       └── v1/                    # Protocol Buffer definitions
 ├── scripts/
 │   └── setup_emulator.go          # Spanner emulator setup script
-├── tests/
-│   └── e2e/                       # End-to-end tests
+├── test/                          # End-to-end tests
 ├── .dockerignore                  # Docker build exclusions
+├── .editorconfig                  # Editor configuration
 ├── .golangci.yml                  # Linter configuration
+├── buf.yaml                       # Protobuf linting configuration
 ├── docker-compose.yml             # Local development setup
 ├── Dockerfile                     # Container build configuration
 ├── go.mod                         # Go module definition
